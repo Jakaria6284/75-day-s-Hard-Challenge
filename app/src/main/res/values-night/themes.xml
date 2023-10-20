@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme._75DaysHardChallenge" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+
+    <style name="SCREEN">
+
+        <item name="android:background">#171616</item>
+    </style>
+
+    <style name="TEXT">
+
+        <item name="android:textColor">#FFFEFE</item>
+    </style>
+</resources>

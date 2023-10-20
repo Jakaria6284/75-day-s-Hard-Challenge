@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "391833432051",
+    "project_id": "day-s-hard-challenge",
+    "storage_bucket": "day-s-hard-challenge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:391833432051:android:4e91a9e0e4727c393e6c86",
+        "android_client_info": {
+          "package_name": "com.example.a75dayshardchallenge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNWPhyBsTD1SdHyaD5iEsyNlaissLdeG4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
