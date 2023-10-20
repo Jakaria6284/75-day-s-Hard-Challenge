@@ -7,16 +7,16 @@
     android:background="#ffffff"
     tools:context=".signupActivity">
 
-    <com.airbnb.lottie.LottieAnimationView
+    <ImageView
         android:id="@+id/lottieAnimationView2"
         android:layout_width="403dp"
-        android:layout_height="224dp"
+        android:layout_height="@dimen/_164sdp"
+        android:src="@drawable/booord"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/prepear" />
+       />
 
 
     <EditText
