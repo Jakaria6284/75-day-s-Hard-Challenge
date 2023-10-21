@@ -7,17 +7,19 @@
     android:background="#ffffff"
     tools:context=".signupActivity">
 
-    <ImageView
+
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/lottieAnimationView2"
-        android:layout_width="403dp"
-        android:layout_height="@dimen/_164sdp"
-        android:src="@drawable/booord"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
         android:scaleType="centerCrop"
+        android:background="#554B4B"
+        app:layout_constraintBottom_toTopOf="@+id/name"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-       />
-
+        app:layout_constraintVertical_bias="0.719" />
 
     <EditText
         android:id="@+id/name"
