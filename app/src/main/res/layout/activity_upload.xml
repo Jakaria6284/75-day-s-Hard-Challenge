@@ -52,14 +52,14 @@
 
     </LinearLayout>
 
-    <Button
+    <TextView
         android:id="@+id/submitbtn"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_30sdp"
+        android:layout_width="@dimen/_160sdp"
+        android:layout_height="@dimen/_40sdp"
         android:background="@drawable/submitbtn"
-
+         android:gravity="center"
         android:text="Add your Entry"
-        android:textColor="#FBFAFA"
+        android:textColor="#F6F3F3"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -109,7 +109,8 @@
         app:layout_constraintTop_toBottomOf="@+id/submitbtn"
         app:layout_constraintVertical_bias="0.244" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/time"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_60sdp"
         android:src="@drawable/baseline_access_alarm_24"
@@ -120,6 +121,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
         app:layout_constraintVertical_bias="0.764" />
+
+
+
+    <Button
+        android:id="@+id/cancelreminder"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/btnback"
+        android:text="Cencel"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.594" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="25dp"/>
-    <solid android:color="#FFFFFF"/>
-
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="#FFFFFF" /> <!-- This color should be white -->
+            <corners android:radius="25dp" />
+        </shape>
+    </item>
+</layer-list>

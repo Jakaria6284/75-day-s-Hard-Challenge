@@ -102,9 +102,9 @@ public class homeeActivity extends AppCompatActivity {
         threeBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              FirebaseAuth.getInstance().signOut();
-              startActivity(new Intent(homeeActivity.this,signupActivity.class));
-              finish();
+             // FirebaseAuth.getInstance().signOut();
+              //startActivity(new Intent(homeeActivity.this,signupActivity.class));
+              //finish();
             }
         });
 

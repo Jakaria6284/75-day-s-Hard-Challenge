@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/drinkwater"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/_300sdp"
         android:orientation="vertical"
 
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,25 +19,128 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_400sdp"
+            android:layout_height="@dimen/_300sdp"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/eatlotti" />
 
 
 
-        <Button
-            android:id="@+id/drinkaddbtn"
-            android:layout_width="@dimen/_180sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:text="Submit"
-            android:layout_marginTop="@dimen/_50sdp"
-            android:textColor="#000000"
-            android:textStyle="bold"
-            android:textSize="@dimen/_18ssp"
-            android:layout_marginStart="@dimen/_60sdp"
-            android:background="@drawable/btnback"/>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/submitbtn"
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:background="@drawable/btnback"
+
+        android:text="Breakfast"
+        android:textColor="#0B0A0A"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/drinkwater"
+        app:layout_constraintTop_toBottomOf="@+id/drinkwater" />
+
+    <Button
+        android:id="@+id/lunch"
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="112dp"
+
+        android:background="@drawable/btnback"
+        android:text="Dinner"
+        android:textColor="#050505"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/drinkwater"
+        app:layout_constraintTop_toBottomOf="@+id/drinkwater" />
+
+    <Button
+        android:id="@+id/submitbtndinner"
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="56dp"
+
+        android:background="@drawable/btnback"
+        android:text="Dinner"
+        android:textColor="#040303"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/drinkwater"
+        app:layout_constraintTop_toBottomOf="@+id/drinkwater" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="1dp"
+        android:layout_marginTop="156dp"
+        android:background="#ffffff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
+
+    <View
+
+        android:id="@+id/view"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="1dp"
+        android:layout_marginTop="156dp"
+        android:background="#ffffff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
+
+    <TextView
+
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:text="Set reminder"
+        android:textColor="#ffff"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintHorizontal_bias="0.96"
+        app:layout_constraintStart_toEndOf="@+id/view"
+        app:layout_constraintTop_toBottomOf="@+id/submitbtn"
+        app:layout_constraintVertical_bias="0.472" />
+
+    <ImageView
+        android:id="@+id/time"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:src="@drawable/baseline_access_alarm_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.831" />
+
+    <Button
+        android:id="@+id/cancelreminder"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/btnback"
+        android:text="Cencel"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.594" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
