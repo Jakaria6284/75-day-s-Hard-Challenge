@@ -1,6 +1,7 @@
 package com.example.a75dayshardchallenge;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -26,12 +27,17 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.a75dayshardchallenge.Adapter.topcontributorAdapter;
 import com.example.a75dayshardchallenge.Model.topcontributorModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -43,12 +49,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class homeeActivity extends AppCompatActivity {
-    TextView textView,wish,name;
+    TextView textView,wish,name,Day,Position,Coin;
     ProgressBar progressBar;
     Calendar calendar;
     ImageView threeBar;
+    CircleImageView userProfile;
     RecyclerView rrecyclerView;
     LinearLayout drinkwater,eat,outdoor,indoor,readbook,progress;
     private static final int PERMISSION_REQUEST_CODE = 100;
@@ -62,6 +71,12 @@ public class homeeActivity extends AppCompatActivity {
         requestPermissionss();
         wish=findViewById(R.id.wish);
         name=findViewById(R.id.username);
+        Day=findViewById(R.id.day);
+        Position=findViewById(R.id.position);
+        Coin=findViewById(R.id.point);
+        userProfile=findViewById(R.id.profilehomepage);
+
+
 
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
@@ -171,6 +186,11 @@ public class homeeActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
         String formattedDate = sdf.format(currentDate);
         textView.setText(formattedDate);
+        //call  method
+        dayretrive(formattedDate);
+        coinandposition(formattedDate);
+        positionretrive();
+        //end
         rrecyclerView = findViewById(R.id.recyclerview);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -178,9 +198,11 @@ public class homeeActivity extends AppCompatActivity {
         rrecyclerView.setLayoutManager(layoutManager);
 
         progressBar.setMax(75);
-        progressBar.setProgress(50);
+
 
         FirebaseFirestore.getInstance().collection("USER")
+                .orderBy("coin", Query.Direction.DESCENDING)
+                .limit(50)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -190,6 +212,7 @@ public class homeeActivity extends AppCompatActivity {
 
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 String imag = documentSnapshot.getString("photo");
+
                                 topcontributorModel model = new topcontributorModel(imag);
                                 topcontributorModelList.add(model);
                             }
@@ -266,7 +289,76 @@ public class homeeActivity extends AppCompatActivity {
     }
 
 
-    //----------------------------------------------
+    //day retrive method
+
+    public  void dayretrive(String date)
+    {
+        FirebaseFirestore.getInstance()
+                .collection("USER")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("days")
+                .document(date)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(value.exists())
+                        {
+                            String daycount=String.valueOf(value.getLong("daycount"));
+                            Day.setText(daycount);
+                            progressBar.setProgress(Integer.parseInt(daycount));
+                        }
+                    }
+                });
+    }
 
     //----------------------------------------------------------
+    //coin and position rettrive
+    public  void coinandposition(String date)
+    {
+        FirebaseFirestore.getInstance()
+                .collection("USER")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(value.exists())
+                        {
+                            String coin=String.valueOf(value.getLong("coin"));
+                            String Name=value.getString("User");
+                            String profile=value.getString("photo");
+                            Glide.with(homeeActivity.this).load(profile).into(userProfile);
+                            name.setText(Name);
+                            Coin.setText("point: "+coin);
+                        }
+                    }
+                });
+    }
+
+    public void positionretrive()
+    {
+        FirebaseFirestore.getInstance()
+                .collection("USER")
+                .orderBy("coin", Query.Direction.DESCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        int userPosition = 1;
+                        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                     for(QueryDocumentSnapshot documentSnapshot:value)
+                     {
+                         String documentt=documentSnapshot.getId();
+                         if(documentt.equals(currentUserId))
+                         {
+                             Position.setText("position: "+String.valueOf(userPosition));
+                             break;
+                         }
+                         userPosition++;
+                     }
+
+                    }
+                });
+    }
+
+    //coin and position retrive
 }
