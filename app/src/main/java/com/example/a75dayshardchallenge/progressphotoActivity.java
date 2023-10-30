@@ -1,6 +1,9 @@
 package com.example.a75dayshardchallenge;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -19,10 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
+import com.example.a75dayshardchallenge.Alarm.photo;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class progressphotoActivity extends AppCompatActivity {
 
@@ -43,10 +48,6 @@ public class progressphotoActivity extends AppCompatActivity {
 
         timepickerimg = findViewById(R.id.time);
         Cancelreminder = findViewById(R.id.cancelreminder);
-        createnotification();
-
-
-
 
         timepickerimg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,12 +77,7 @@ public class progressphotoActivity extends AppCompatActivity {
 
 
 
-        Cancelreminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelAlarm();
-            }
-        });
+
 
 
 
@@ -91,40 +87,31 @@ public class progressphotoActivity extends AppCompatActivity {
 
     }
 
-    private void createnotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "drinkchannel";
-            String desc = "Channel for drink water";
-            int imp = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("jakaria", name, imp);
-            channel.setDescription(desc);
 
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
+
+
+
 
     private void createAlarm() {
         if (calendar != null) {
-            // Create an intent to trigger the alarm
-            Intent intent = new Intent(this, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            long timeUntilAlarm = calendar.getTimeInMillis() - System.currentTimeMillis();
 
-            // Set the alarm to trigger at the selected time
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+            Data inputData = new Data.Builder()
+                    .putString("title", "Alarm Set")
+                    .putString("text", "Your alarm is set for the selected time")
+                    .build();
+
+            OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(photo.class)
+                    .setInitialDelay(timeUntilAlarm, TimeUnit.MILLISECONDS)
+                    .setInputData(inputData)
+                    .build();
+
+            WorkManager.getInstance(this).enqueue(workRequest);
 
             Toast.makeText(progressphotoActivity.this, "Reminder set", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(progressphotoActivity.this, "Please select a reminder time.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void cancelAlarm() {
-        if (pendingIntent != null) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-            Toast.makeText(progressphotoActivity.this, "Reminder canceled", Toast.LENGTH_SHORT).show();
         }
     }
 

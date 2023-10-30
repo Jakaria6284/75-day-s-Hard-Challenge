@@ -1,5 +1,7 @@
 package com.example.a75dayshardchallenge;
 
+import static androidx.core.app.ActivityCompat.requestPermissions;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -68,13 +70,17 @@ public class homeeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homee);
-        requestPermissionss();
+       // requestPermissionss();
         wish=findViewById(R.id.wish);
         name=findViewById(R.id.username);
         Day=findViewById(R.id.day);
         Position=findViewById(R.id.position);
         Coin=findViewById(R.id.point);
         userProfile=findViewById(R.id.profilehomepage);
+
+        //
+
+        //
 
 
 
@@ -102,9 +108,9 @@ public class homeeActivity extends AppCompatActivity {
         threeBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             // FirebaseAuth.getInstance().signOut();
-              //startActivity(new Intent(homeeActivity.this,signupActivity.class));
-              //finish();
+              FirebaseAuth.getInstance().signOut();
+              startActivity(new Intent(homeeActivity.this,signupActivity.class));
+              finish();
             }
         });
 
@@ -224,22 +230,7 @@ public class homeeActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean arePermissionsGranted() {
-        String[] permissions = {
-                Manifest.permission.WAKE_LOCK,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.RECEIVE_BOOT_COMPLETED,
-                Manifest.permission.FOREGROUND_SERVICE
-        };
 
-        for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     private void signOutAndNavigateToSignUp() {
         FirebaseAuth.getInstance().signOut();
@@ -247,46 +238,9 @@ public class homeeActivity extends AppCompatActivity {
         finish();
     }
 
-    private void requestPermissionss() {
-        String[] permissions = {
-                Manifest.permission.WAKE_LOCK,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.RECEIVE_BOOT_COMPLETED,
-                Manifest.permission.FOREGROUND_SERVICE
-        };
 
-        List<String> permissionList = new ArrayList<>();
-        for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                permissionList.add(permission);
-            }
-        }
 
-        if (!permissionList.isEmpty()) {
-            showPermissionExplanationDialog(permissionList);
-            Log.d("PermissionLog", "Permission dialog shown");
-        }else
-        {
-            Log.d("PermissionLog", "All permissions already granted");
-        }
-    }
 
-    private void showPermissionExplanationDialog(List<String> permissionList) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Permission Request");
-        builder.setMessage("This app requires certain permissions to function properly. Please grant the necessary permissions.");
-
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            ActivityCompat.requestPermissions(this, permissionList.toArray(new String[0]), PERMISSION_REQUEST_CODE);
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            // Handle if the user clicks "Cancel" (optional)
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 
 
     //day retrive method

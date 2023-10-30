@@ -1,12 +1,18 @@
 package com.example.a75dayshardchallenge;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,9 +24,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class uploadActivity extends AppCompatActivity {
 
@@ -30,6 +49,7 @@ public class uploadActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
     private boolean timerRunning;
+    private static final String CHANNEL_ID = "channel_id";
     private SharedPreferences sharedPreferences;
     private static final String PREFS_NAME = "TimerPrefs";
     private static final String PREF_TIME_LEFT = "timeLeftInMillis";
@@ -39,6 +59,7 @@ public class uploadActivity extends AppCompatActivity {
     private Calendar calendar;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
+    String formattedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +72,20 @@ public class uploadActivity extends AppCompatActivity {
 
         Cancelreminder = findViewById(R.id.cancelreminder);
         timepickerimg = findViewById(R.id.time);
+        calendar=Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
+        formattedDate = sdf.format(currentDate);
 
-        createnotification();
+
+
+
 
         timepickerimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Cancelreminder.setVisibility(View.VISIBLE);
+
                 timePicker = new MaterialTimePicker.Builder()
                         .setTimeFormat(TimeFormat.CLOCK_12H)
                         .setHour(12)
@@ -75,6 +102,7 @@ public class uploadActivity extends AppCompatActivity {
                         calendar.set(Calendar.SECOND, 0);
                         calendar.set(Calendar.MILLISECOND, 0);
                         createAlarm();
+
                     }
                 });
             }
@@ -82,12 +110,6 @@ public class uploadActivity extends AppCompatActivity {
 
 
 
-        Cancelreminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelAlarm();
-            }
-        });
 
         Submitbtn.setBackgroundColor(getResources().getColor(R.color.bbblack));
         Submitbtn.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +161,26 @@ public class uploadActivity extends AppCompatActivity {
                 Submitbtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(uploadActivity.this, "Submit", Toast.LENGTH_SHORT).show();
+                        Map<String,Object> fileldvalueUpdate=new HashMap<>();
+                        fileldvalueUpdate.put("field1",true);
+
+
+                        FirebaseFirestore.getInstance()
+                                .collection("USER")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("days")
+                                .document(formattedDate)
+                                .update(fileldvalueUpdate)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            Toast.makeText(uploadActivity.this, "Submit", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
                     }
                 });
                 timerRunning = false;
@@ -197,28 +238,23 @@ public class uploadActivity extends AppCompatActivity {
         }
     }
 
-    private void createnotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "drinkchannel";
-            String desc = "Channel for drink water";
-            int imp = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("jakaria", name, imp);
-            channel.setDescription(desc);
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
     private void createAlarm() {
         if (calendar != null) {
-            // Create an intent to trigger the alarm
-            Intent intent = new Intent(this, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            long timeUntilAlarm = calendar.getTimeInMillis() - System.currentTimeMillis();
 
-            // Set the alarm to trigger at the selected time
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+            Data inputData = new Data.Builder()
+                    .putString("title", "Alarm Set")
+                    .putString("text", "Your alarm is set for the selected time")
+                    .build();
+
+            OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(AlarmReceiver.class)
+                    .setInitialDelay(timeUntilAlarm, TimeUnit.MILLISECONDS)
+                    .setInputData(inputData)
+                    .build();
+
+            WorkManager.getInstance(this).enqueue(workRequest);
 
             Toast.makeText(uploadActivity.this, "Reminder set", Toast.LENGTH_SHORT).show();
         } else {
@@ -226,11 +262,24 @@ public class uploadActivity extends AppCompatActivity {
         }
     }
 
-    private void cancelAlarm() {
-        if (pendingIntent != null) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-            Toast.makeText(uploadActivity.this, "Reminder canceled", Toast.LENGTH_SHORT).show();
-        }
-    }
+
+
+
+
+
+
 }
+
+
+        //-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+

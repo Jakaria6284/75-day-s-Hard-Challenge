@@ -1,13 +1,20 @@
 package com.example.a75dayshardchallenge;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,10 +26,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
+import com.example.a75dayshardchallenge.Alarm.outdoorrecevier;
+import com.example.a75dayshardchallenge.Model.TimeService;
+import com.example.a75dayshardchallenge.Model.outerTimeService;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class outdoorworkoutActivity extends AppCompatActivity {
 
@@ -33,11 +53,14 @@ public class outdoorworkoutActivity extends AppCompatActivity {
     private PendingIntent pendingIntent;
 
     private TextView timerTextView;
-    private Button startPauseButton, Submitbtn;
+    private Button startPauseButton;
+    TextView Submitbtn;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
     private boolean timerRunning;
     private Button  Cancelreminder;
+    String formattedDate;
+
     private SharedPreferences sharedPreferences;
     private static final String PREFS_NAME = "UploadActivityPrefs"; // Different SharedPreferences file
     private static final String PREF_TIME_LEFT = "timeLeftInMillis";
@@ -54,7 +77,24 @@ public class outdoorworkoutActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         timepickerimg = findViewById(R.id.time);
         Cancelreminder = findViewById(R.id.cancelreminder);
-        createnotification();
+
+        calendar=Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
+        formattedDate = sdf.format(currentDate);
+
+
+
+
+
+
+
+        if (!isServiceRunning(TimeService.class)) {
+            Intent serviceIntent = new Intent(this, outerTimeService.class);
+            startService(serviceIntent);
+        }
+
+        startTimer();
 
         Submitbtn.setBackgroundColor(getResources().getColor(R.color.bbblack));
 
@@ -63,6 +103,7 @@ public class outdoorworkoutActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Submitbtn.setEnabled(false);
                 Toast.makeText(outdoorworkoutActivity.this, "Start your timer. After 20 minutes, the submit button will enable automatically.", Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -71,7 +112,7 @@ public class outdoorworkoutActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Cancelreminder.setVisibility(View.VISIBLE);
+
                 timePicker = new MaterialTimePicker.Builder()
                         .setTimeFormat(TimeFormat.CLOCK_12H)
                         .setHour(12)
@@ -97,12 +138,7 @@ public class outdoorworkoutActivity extends AppCompatActivity {
 
 
 
-        Cancelreminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelAlarm();
-            }
-        });
+
 
         startPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +181,25 @@ public class outdoorworkoutActivity extends AppCompatActivity {
                 Submitbtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(outdoorworkoutActivity.this, "Submit", Toast.LENGTH_SHORT).show();
+                        Map<String,Object> fileldvalueUpdate=new HashMap<>();
+                        fileldvalueUpdate.put("field3",true);
+
+
+                        FirebaseFirestore.getInstance()
+                                .collection("USER")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("days")
+                                .document(formattedDate)
+                                .update(fileldvalueUpdate)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            Toast.makeText(outdoorworkoutActivity.this, "Submit", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                     }
                 });
                 timerRunning = false;
@@ -182,6 +236,8 @@ public class outdoorworkoutActivity extends AppCompatActivity {
         editor.putLong(PREF_TIME_LEFT, timeLeftInMillis);
         editor.putBoolean(PREF_TIMER_RUNNING, timerRunning);
         editor.apply();
+
+        unregisterReceiver(timerFinishedReceiver);
     }
 
     @Override
@@ -202,30 +258,27 @@ public class outdoorworkoutActivity extends AppCompatActivity {
             timerRunning = false;
             updateUI();
         }
-    }
 
-    private void createnotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "drinkchannel";
-            String desc = "Channel for drink water";
-            int imp = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("jakaria", name, imp);
-            channel.setDescription(desc);
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        IntentFilter filter = new IntentFilter("TIMER_FINISHE");
+        registerReceiver(timerFinishedReceiver, filter);
     }
 
     private void createAlarm() {
         if (calendar != null) {
-            // Create an intent to trigger the alarm
-            Intent intent = new Intent(this, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            long timeUntilAlarm = calendar.getTimeInMillis() - System.currentTimeMillis();
 
-            // Set the alarm to trigger at the selected time
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+            Data inputData = new Data.Builder()
+                    .putString("title", "Alarm Set")
+                    .putString("text", "Your alarm is set for the selected time")
+                    .build();
+
+            OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(outdoorrecevier.class)
+                    .setInitialDelay(timeUntilAlarm, TimeUnit.MILLISECONDS)
+                    .setInputData(inputData)
+                    .build();
+
+            WorkManager.getInstance(this).enqueue(workRequest);
 
             Toast.makeText(outdoorworkoutActivity.this, "Reminder set", Toast.LENGTH_SHORT).show();
         } else {
@@ -233,11 +286,36 @@ public class outdoorworkoutActivity extends AppCompatActivity {
         }
     }
 
-    private void cancelAlarm() {
-        if (pendingIntent != null) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-            Toast.makeText(outdoorworkoutActivity.this, "Reminder canceled", Toast.LENGTH_SHORT).show();
+
+
+
+
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
         }
+        return false;
     }
+
+    private BroadcastReceiver timerFinishedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Handle the timer finished event
+            if ("TIMER_FINISHE".equals(intent.getAction())) {
+                // Update your UI here, e.g., change button color or enable the button
+                Submitbtn.setEnabled(true);
+                Submitbtn.setBackgroundColor(getResources().getColor(R.color.green));
+            }
+        }
+    };
+
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, outerTimeService.class));
+    }
+
+
 }

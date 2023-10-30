@@ -1,6 +1,9 @@
 package com.example.a75dayshardchallenge;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -19,10 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
+import com.example.a75dayshardchallenge.Alarm.eatreciver;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class eathealthyActivity extends AppCompatActivity {
 
@@ -42,7 +47,7 @@ public class eathealthyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_eathealthy);
         timepickerimg = findViewById(R.id.time);
         Cancelreminder = findViewById(R.id.cancelreminder);
-        createnotification();
+
 
         timepickerimg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,12 +75,7 @@ public class eathealthyActivity extends AppCompatActivity {
             }
         });
 
-        Cancelreminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelAlarm();
-            }
-        });
+
 
 
 
@@ -84,28 +84,24 @@ public class eathealthyActivity extends AppCompatActivity {
 
 
     }
-    private void createnotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "eatchannel";
-            String desc = "Channel for eat";
-            int imp = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("jakaria", name, imp);
-            channel.setDescription(desc);
 
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
     private void createAlarm() {
         if (calendar != null) {
-            // Create an intent to trigger the alarm
-            Intent intent = new Intent(this, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            long timeUntilAlarm = calendar.getTimeInMillis() - System.currentTimeMillis();
 
-            // Set the alarm to trigger at the selected time
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+            Data inputData = new Data.Builder()
+                    .putString("title", "Alarm Set")
+                    .putString("text", "Your alarm is set for the selected time")
+                    .build();
+
+            OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(eatreciver.class)
+                    .setInitialDelay(timeUntilAlarm, TimeUnit.MILLISECONDS)
+                    .setInputData(inputData)
+                    .build();
+
+            WorkManager.getInstance(this).enqueue(workRequest);
 
             Toast.makeText(eathealthyActivity.this, "Reminder set", Toast.LENGTH_SHORT).show();
         } else {
@@ -113,13 +109,8 @@ public class eathealthyActivity extends AppCompatActivity {
         }
     }
 
-    private void cancelAlarm() {
-        if (pendingIntent != null) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-            Toast.makeText(eathealthyActivity.this, "Reminder canceled", Toast.LENGTH_SHORT).show();
-        }
-    }
+
+
 
 
 

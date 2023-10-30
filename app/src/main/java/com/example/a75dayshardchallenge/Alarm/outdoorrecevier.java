@@ -24,13 +24,14 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.a75dayshardchallenge.R;
+import com.example.a75dayshardchallenge.outdoorworkoutActivity;
 import com.example.a75dayshardchallenge.uploadActivity;
 
-public class AlarmReceiver extends Worker {
+public class outdoorrecevier extends Worker {
     MediaPlayer mediaPlayer;
 
 
-    public AlarmReceiver(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public outdoorrecevier(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
@@ -42,7 +43,7 @@ public class AlarmReceiver extends Worker {
 
 
 
-            showNotification();
+        showNotification();
 
 
 
@@ -57,19 +58,19 @@ public class AlarmReceiver extends Worker {
     private void showNotification() {
         // Create a notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManagerCompat.from(getApplicationContext()).createNotificationChannel(new NotificationChannel("Drink_water", "Drink", NotificationManager.IMPORTANCE_DEFAULT));
+            NotificationManagerCompat.from(getApplicationContext()).createNotificationChannel(new NotificationChannel("outdoor", "outdoor", NotificationManager.IMPORTANCE_DEFAULT));
         }
 
         // Create an intent to open the uploadActivity
-        Intent intent = new Intent(getApplicationContext(), uploadActivity.class);
+        Intent intent = new Intent(getApplicationContext(), outdoorworkoutActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         // Build and display the notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "Drink_water")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "outdoor")
                 .setSmallIcon(R.drawable.bar)
-                .setContentTitle("Drink")
-                .setContentText("it's time to drink water")
+                .setContentTitle("Out Door workout Time")
+                .setContentText("it's time to workout in outdoor")
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
@@ -84,7 +85,7 @@ public class AlarmReceiver extends Worker {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        NotificationManagerCompat.from(getApplicationContext()).notify(1, builder.build());
+        NotificationManagerCompat.from(getApplicationContext()).notify(3, builder.build());
     }
 
 

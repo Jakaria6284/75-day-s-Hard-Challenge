@@ -52,12 +52,12 @@
 
     </LinearLayout>
 
-    <Button
+    <TextView
         android:id="@+id/submitbtn"
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_30sdp"
         android:background="@drawable/submitbtn"
-
+       android:gravity="center"
         android:text="Add your Entry"
         android:textColor="#FBFAFA"
         android:textSize="@dimen/_14ssp"
