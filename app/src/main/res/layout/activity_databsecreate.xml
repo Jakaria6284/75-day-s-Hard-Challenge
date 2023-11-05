@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    tools:context=".MainActivity">
+    android:background="@color/white"
+    tools:context=".databsecreate">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
@@ -20,14 +20,14 @@
         app:lottie_rawRes="@raw/time" />
 
     <TextView
-        android:id="@+id/start"
-        android:layout_width="@dimen/_200sdp"
-        android:layout_height="@dimen/_60sdp"
+        android:id="@+id/startt"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_40sdp"
         android:background="@drawable/dash"
-        android:text="Get started"
+        android:text="Accept challenge"
         android:textColor="#ffffff"
         android:textStyle="bold"
-        android:textSize="@dimen/_20ssp"
+        android:textSize="@dimen/_18ssp"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
         app:layout_constraintEnd_toEndOf="parent"

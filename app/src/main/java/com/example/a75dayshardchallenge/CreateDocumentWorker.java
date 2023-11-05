@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
+import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
+import com.example.a75dayshardchallenge.RoomDatabase.day;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,52 +26,87 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class CreateDocumentWorker extends Worker {
+    AppDatabase appDatabase;
     public CreateDocumentWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        appDatabase=AppDatabase.getInstance(context);
     }
 
     @NonNull
     @Override
     public Result doWork() {
         try {
+            DayDao dayDao=appDatabase.days75Dao();
+
+
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
             final String currentDate = dateFormat.format(new Date());
 
-            // Calculate the previous date.
+
+
+
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             Date previousDate = calendar.getTime();
             String previousDateStr = dateFormat.format(previousDate);
 
-            // Query the Firestore to check if any field is false in the previous document.
-            DocumentReference prevDocRef = FirebaseFirestore.getInstance()
-                    .collection("USER")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .collection("days")
-                    .document(previousDateStr);
 
-            prevDocRef.get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot prevDocumentSnapshot = task.getResult();
-                                try {
-                                    processPreviousDocument(prevDocumentSnapshot, currentDate);
-                                } catch (ParseException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            } else {
-                                // Handle the error here.
-                                Log.e("CreateDocumentWorker", "Error fetching previous document: " + task.getException());
-                                // Return a failure result or take appropriate action.
-                                Result.failure();
-                            }
-                        }
-                    });
+
+
+            day previousDay= dayDao.getDayById(previousDateStr);
+
+
+
+
+
+
+
+
+
+
+            if (previousDay != null) {
+                // Check if any of the boolean fields are false
+                if (!previousDay.isField1()|| !previousDay.isField2() || !previousDay.isField3() ||
+                        !previousDay.isField4() || !previousDay.isField5() || !previousDay.isField6()) {
+                    // Delete all data in the table
+                    dayDao.deleteDay();
+
+                    day newDay = new day();
+                    newDay.setId(currentDate);
+                    newDay.setField1(false);
+                    newDay.setField2(false);
+                    newDay.setField3(false);
+                    newDay.setField4(false);
+                    newDay.setField5(false);
+                    newDay.setField6(false);
+                    newDay.setDaycount(1); // Increment daycount
+                    dayDao.insertDay(newDay);
+
+
+
+
+                }else
+                {
+                   // long currentDateee = System.currentTimeMillis();
+                    day initialEntry = new day();
+                    initialEntry.setId(currentDate);
+                    initialEntry.setField1(false);
+                    initialEntry.setField2(false);
+                    initialEntry.setField3(false);
+                    initialEntry.setField4(false);
+                    initialEntry.setField5(false);
+                    initialEntry.setField6(false);
+                    initialEntry.setDaycount(previousDay.getDaycount()+1);
+
+                    appDatabase.days75Dao().insertDay(initialEntry);
+                }
+            }
+
 
             return Result.success();
         } catch (Exception e) {
@@ -77,108 +115,6 @@ public class CreateDocumentWorker extends Worker {
         }
     }
 
-    private void processPreviousDocument(DocumentSnapshot prevDocumentSnapshot, String currentDate) throws ParseException {
-        if (prevDocumentSnapshot.exists()) {
-            boolean field1 = prevDocumentSnapshot.getBoolean("field1");
-            boolean field2 = prevDocumentSnapshot.getBoolean("field2");
-            boolean field3 = prevDocumentSnapshot.getBoolean("field3");
-            boolean field4 = prevDocumentSnapshot.getBoolean("field4");
-            boolean field5 = prevDocumentSnapshot.getBoolean("field5");
-            boolean field6 = prevDocumentSnapshot.getBoolean("field6");
 
-            if (field1 && field2 && field3 && field4 && field5 && field6) {
-                // All boolean fields are true in the previous document; create the next document.
-
-                // Get the next date.
-                Date currentDatee = Calendar.getInstance().getTime();
-                SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
-                String formattedDate = sdf.format(currentDatee);
-
-                // Create the Firestore document with all boolean fields set to false
-                // and an incremented daycount field.
-                Map<String, Object> data = new HashMap<>();
-                data.put("field1", false);
-                data.put("field2", false);
-                data.put("field3", false);
-                data.put("field4", false);
-                data.put("field5", false);
-                data.put("field6", false);
-
-                // Increment the daycount field.
-                long daycount = prevDocumentSnapshot.getLong("daycount") + 1;
-                data.put("daycount", daycount);
-
-                DocumentReference nextDocRef = FirebaseFirestore.getInstance()
-                        .collection("USER")
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .collection("days")
-                        .document(formattedDate);
-
-                nextDocRef.set(data)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d("CreateDocumentWorker", "Next document created successfully");
-                                } else {
-                                    Log.e("CreateDocumentWorker", "Error creating next document: " + task.getException());
-                                }
-                            }
-                        });
-            } else {
-                // Delete all documents and create a new one with the current date.
-                FirebaseFirestore.getInstance()
-                        .collection("USER")
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .collection("days")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        document.getReference().delete();
-                                    }
-                                    // Create a new document with the current date and daycount 1.
-                                    createNewDocument(currentDate);
-                                }
-                            }
-                        });
-            }
-        }
-    }
-
-    private void createNewDocument(String currentDate) {
-        // Create a new document with the current date and daycount 1.
-
-        Date currentDatee = Calendar.getInstance().getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
-        String formattedDate = sdf.format(currentDatee);
-        Map<String, Object> newData = new HashMap<>();
-        newData.put("field1", false);
-        newData.put("field2", false);
-        newData.put("field3", false);
-        newData.put("field4", false);
-        newData.put("field5", false);
-        newData.put("field6", false);
-        newData.put("daycount", 1);
-
-
-        FirebaseFirestore.getInstance()
-                .collection("USER")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("days")
-                .document(formattedDate)
-                .set(newData)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("CreateDocumentWorker", "New document created successfully");
-                        } else {
-                            Log.e("CreateDocumentWorker", "Error creating new document: " + task.getException());
-                        }
-                    }
-                });
-    }
 }
+

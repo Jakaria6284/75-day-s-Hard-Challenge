@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import android.Manifest;
 
 public class indooractivity extends AppCompatActivity {
 
@@ -376,5 +377,20 @@ public class indooractivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopService(new Intent(this, TimeService.class));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this,Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, 1);
+
+            }
+            else {
+                // repeat the permission or open app details
+            }
+        }
     }
 }

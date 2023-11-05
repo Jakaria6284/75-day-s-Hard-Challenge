@@ -1,6 +1,7 @@
 package com.example.a75dayshardchallenge;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -12,6 +13,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -29,6 +31,7 @@ import com.google.android.material.timepicker.TimeFormat;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+import android.Manifest;
 
 public class readActivity extends AppCompatActivity {
     private MaterialTimePicker timePicker;
@@ -39,6 +42,7 @@ public class readActivity extends AppCompatActivity {
     private Button  Cancelreminder;
 
     private TextView timerTextView;
+
     private Button startPauseButton;
     TextView Submitbtn;
     private CountDownTimer countDownTimer;
@@ -229,4 +233,18 @@ public class readActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this,Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, 1);
+
+            }
+            else {
+                // repeat the permission or open app details
+            }
+        }
+    }
 }
