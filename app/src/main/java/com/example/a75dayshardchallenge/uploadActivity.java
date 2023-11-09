@@ -3,6 +3,7 @@ package com.example.a75dayshardchallenge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.room.Room;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -26,6 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
+import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
+import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
+import com.example.a75dayshardchallenge.RoomDatabase.day;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -49,6 +53,7 @@ public class uploadActivity extends AppCompatActivity {
     private TextView timerTextView, Submitbtn;
     private Button startPauseButton, Setreminder, Cancelreminder;
     ImageView timepickerimg;
+    AppDatabase database;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
     private boolean timerRunning;
@@ -60,6 +65,8 @@ public class uploadActivity extends AppCompatActivity {
 
     private MaterialTimePicker timePicker;
     private Calendar calendar;
+    day da;
+    DayDao dayDao;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     String formattedDate;
@@ -79,6 +86,15 @@ public class uploadActivity extends AppCompatActivity {
         Date currentDate = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
         formattedDate = sdf.format(currentDate);
+
+        database=AppDatabase.getInstance(this);
+        database= Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"app_database").build();
+         dayDao=database.days75Dao();
+
+
+
+
+
 
 
 
@@ -164,25 +180,21 @@ public class uploadActivity extends AppCompatActivity {
                 Submitbtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Map<String,Object> fileldvalueUpdate=new HashMap<>();
-                        fileldvalueUpdate.put("field1",true);
 
+                      new Thread(new Runnable() {
+                          @Override
+                          public void run() {
+                              da=dayDao.getDayById(formattedDate);
 
-                        FirebaseFirestore.getInstance()
-                                .collection("USER")
-                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .collection("days")
-                                .document(formattedDate)
-                                .update(fileldvalueUpdate)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful())
-                                        {
-                                            Toast.makeText(uploadActivity.this, "Submit", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                              if(da!=null)
+                              {
+                                  da.setField1(true);
+
+                                  dayDao.updateDay(da);
+                              }
+                          }
+                      }).start();
+
 
                     }
                 });

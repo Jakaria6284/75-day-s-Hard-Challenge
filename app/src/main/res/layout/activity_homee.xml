@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:text="1"
+                    android:text="10"
                     android:textColor="#ffffff"
                     android:textSize="@dimen/_14ssp"
                     android:textStyle="normal" />
@@ -202,7 +202,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Top Challenger's"
+        android:text="Daily progress"
         android:textColor="#ffffff"
         android:textSize="@dimen/_13ssp"
         android:textStyle="bold"

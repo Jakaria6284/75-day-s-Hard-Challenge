@@ -31,6 +31,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -39,6 +40,9 @@ import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
 import com.example.a75dayshardchallenge.Alarm.eatreciver;
 import com.example.a75dayshardchallenge.Alarm.indoor;
 import com.example.a75dayshardchallenge.Model.TimeService;
+import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
+import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
+import com.example.a75dayshardchallenge.RoomDatabase.day;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -60,6 +64,9 @@ public class indooractivity extends AppCompatActivity {
     private TextView timerTextView;
     private Button startPauseButton;
     TextView Submitbtn;
+    AppDatabase database;
+    day da;
+    DayDao dayDao;
     String formattedDate;
 
     private CountDownTimer countDownTimer;
@@ -88,11 +95,16 @@ public class indooractivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         timepickerimg = findViewById(R.id.time);
         Cancelreminder = findViewById(R.id.cancelreminder);
+        database=AppDatabase.getInstance(this);
 
         calendar=Calendar.getInstance();
         Date currentDate = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
         formattedDate = sdf.format(currentDate);
+
+        database=AppDatabase.getInstance(this);
+        database= Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"app_database").build();
+        dayDao=database.days75Dao();
 
 
 
@@ -204,25 +216,19 @@ public class indooractivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        Map<String,Object> fileldvalueUpdate=new HashMap<>();
-                        fileldvalueUpdate.put("field4",true);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                da=dayDao.getDayById(formattedDate);
 
+                                if(da!=null)
+                                {
+                                    da.setField4(true);
 
-                        FirebaseFirestore.getInstance()
-                                .collection("USER")
-                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .collection("days")
-                                .document(formattedDate)
-                                .update(fileldvalueUpdate)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful())
-                                        {
-                                            Toast.makeText(indooractivity.this, "Submit", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                                    dayDao.updateDay(da);
+                                }
+                            }
+                        }).start();
                     }
                 });
                 timerRunning = false;

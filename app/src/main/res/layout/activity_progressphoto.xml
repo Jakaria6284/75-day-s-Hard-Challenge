@@ -17,12 +17,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/imagee"
+            android:layout_width="@dimen/_280sdp"
+            android:layout_gravity="center"
             android:layout_height="@dimen/_300sdp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/takephoto" />
+           android:src="@drawable/btnback" />
 
 
             />
@@ -34,7 +34,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/submitbtn"
+        android:id="@+id/submitbtnn"
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_30sdp"
         android:background="@drawable/btnback"
@@ -54,24 +54,24 @@
         android:id="@+id/divider"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="1dp"
-        android:layout_marginTop="56dp"
         android:background="#ffffff"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
+        app:layout_constraintTop_toTopOf="@+id/textView" />
 
     <View
 
         android:id="@+id/view"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="1dp"
-        android:layout_marginTop="56dp"
         android:background="#ffffff"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
+        app:layout_constraintTop_toTopOf="@+id/textView" />
 
     <TextView
 
@@ -87,8 +87,9 @@
         app:layout_constraintEnd_toStartOf="@+id/divider"
         app:layout_constraintHorizontal_bias="0.88"
         app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn"
-        app:layout_constraintVertical_bias="0.244" />
+
+        app:layout_constraintTop_toBottomOf="@+id/submitbtnn"
+        app:layout_constraintVertical_bias="0.578" />
 
     <ImageView
         android:id="@+id/time"
@@ -101,7 +102,7 @@
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.46" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/cancelreminder"

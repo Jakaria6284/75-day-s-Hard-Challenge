@@ -25,10 +25,13 @@ public class day {
     boolean field5;
     @ColumnInfo
     boolean field6;
-    @PrimaryKey
+
     @ColumnInfo
     int  daycount;
 
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo
+    int idcard;
 
     public String getId() {
         return id;
@@ -92,5 +95,13 @@ public class day {
 
     public void setDaycount(int daycount) {
         this.daycount = daycount;
+    }
+
+    public int getIdcard() {
+        return idcard;
+    }
+
+    public void setIdcard(int idcard) {
+        this.idcard = idcard;
     }
 }

@@ -2,6 +2,7 @@ package com.example.a75dayshardchallenge;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.room.Room;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -25,24 +26,34 @@ import android.widget.Toast;
 
 import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
 import com.example.a75dayshardchallenge.Alarm.eatreciver;
+import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
+import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
+import com.example.a75dayshardchallenge.RoomDatabase.day;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import android.Manifest;
 
 public class eathealthyActivity extends AppCompatActivity {
 
 
-    private Button breakfast,dinner,lounch;
+    private TextView breakfast;
     ImageView timepickerimg;
 
     private MaterialTimePicker timePicker;
     private Calendar calendar;
+    AppDatabase database;
+    day da;
+    DayDao dayDao;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private Button Cancelreminder;
+    Calendar calendar1;
 
 
     @Override
@@ -51,6 +62,36 @@ public class eathealthyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_eathealthy);
         timepickerimg = findViewById(R.id.time);
         Cancelreminder = findViewById(R.id.cancelreminder);
+        breakfast=findViewById(R.id.submitbtn);
+        calendar1=Calendar.getInstance();
+        Date currentDate = calendar1.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
+        String formattedDate = sdf.format(currentDate);
+
+        database=AppDatabase.getInstance(this);
+        database= Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"app_database").build();
+        dayDao=database.days75Dao();
+
+        breakfast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        da=dayDao.getDayById(formattedDate);
+
+                        if(da!=null)
+                        {
+                            da.setField2(true);
+
+                            dayDao.updateDay(da);
+                        }
+                    }
+                }).start();
+            }
+        });
+
+
 
 
         timepickerimg.setOnClickListener(new View.OnClickListener() {

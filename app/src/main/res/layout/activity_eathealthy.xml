@@ -29,44 +29,16 @@
 
     </LinearLayout>
 
-    <Button
+
+    <TextView
         android:id="@+id/submitbtn"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_30sdp"
+        android:layout_width="@dimen/_180sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
         android:background="@drawable/btnback"
-
-        android:text="Breakfast"
+        android:text="Add entry"
         android:textColor="#0B0A0A"
-        android:textSize="@dimen/_14ssp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/drinkwater"
-        app:layout_constraintTop_toBottomOf="@+id/drinkwater" />
-
-    <Button
-        android:id="@+id/lunch"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_marginTop="112dp"
-
-        android:background="@drawable/btnback"
-        android:text="Dinner"
-        android:textColor="#050505"
-        android:textSize="@dimen/_14ssp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/drinkwater"
-        app:layout_constraintTop_toBottomOf="@+id/drinkwater" />
-
-    <Button
-        android:id="@+id/submitbtndinner"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_marginTop="56dp"
-
-        android:background="@drawable/btnback"
-        android:text="Dinner"
-        android:textColor="#040303"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,24 +49,26 @@
         android:id="@+id/divider"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="1dp"
-        android:layout_marginTop="156dp"
         android:background="#ffffff"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
+        app:layout_constraintTop_toBottomOf="@+id/drinkwater"
+        app:layout_constraintVertical_bias="0.965" />
 
     <View
 
         android:id="@+id/view"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="1dp"
-        android:layout_marginTop="156dp"
         android:background="#ffffff"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
+        app:layout_constraintTop_toBottomOf="@+id/drinkwater"
+        app:layout_constraintVertical_bias="0.965" />
 
     <TextView
 
@@ -110,8 +84,8 @@
         app:layout_constraintEnd_toStartOf="@+id/divider"
         app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn"
-        app:layout_constraintVertical_bias="0.472" />
+        app:layout_constraintTop_toBottomOf="@+id/drinkwater"
+        app:layout_constraintVertical_bias="0.68" />
 
     <ImageView
         android:id="@+id/time"

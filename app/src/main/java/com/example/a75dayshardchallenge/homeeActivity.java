@@ -1,7 +1,6 @@
 package com.example.a75dayshardchallenge;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,8 +8,10 @@ import androidx.room.Room;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+
 import android.content.Intent;
-import android.os.AsyncTask;
+
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -21,27 +22,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.a75dayshardchallenge.Adapter.topcontributorAdapter;
-import com.example.a75dayshardchallenge.Model.topcontributorModel;
+
 import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
 import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
+import com.example.a75dayshardchallenge.RoomDatabase.Image;
+import com.example.a75dayshardchallenge.RoomDatabase.ImgDao;
 import com.example.a75dayshardchallenge.RoomDatabase.day;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -49,24 +42,24 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import kotlinx.coroutines.CoroutineScope;
+
 
 
 public class homeeActivity extends AppCompatActivity {
-    TextView textView,wish,Name,Day,Position,Coin;
+    TextView textView, wish, Name, Day, Position, Coin;
     ProgressBar progressBar;
-    private String cachedCoin;
+
     AppDatabase database;
-    private String cachedName;
-    private String cachedProfile;
-    private List<topcontributorModel> cachedTopContributors = new ArrayList<>();
+
+
+
     private topcontributorAdapter cachedAdapter;
 
-    Calendar calendar;
+
     ImageView threeBar;
     CircleImageView userProfile;
     RecyclerView rrecyclerView;
-    LinearLayout drinkwater,eat,outdoor,indoor,readbook,progress;
+    LinearLayout drinkwater, eat, outdoor, indoor, readbook, progress;
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int REQUEST_CODE_WAKE_LOCK = 100;
     private static final int REQUEST_NETWORK_STATE_PERMISSION = 123;
@@ -75,22 +68,67 @@ public class homeeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homee);
-       // requestPermissionss();
-        wish=findViewById(R.id.wish);
-        Name=findViewById(R.id.username);
-        Day=findViewById(R.id.day);
-        Position=findViewById(R.id.position);
-        Coin=findViewById(R.id.point);
-        userProfile=findViewById(R.id.profilehomepage);
-        database=AppDatabase.getInstance(this);
-        database= Room.databaseBuilder(getApplicationContext()
-                        ,AppDatabase.class,"app_database").allowMainThreadQueries()
+        // requestPermissionss();
+        wish = findViewById(R.id.wish);
+        Name = findViewById(R.id.username);
+        Day = findViewById(R.id.day);
+        Position = findViewById(R.id.position);
+        Coin = findViewById(R.id.point);
+        userProfile = findViewById(R.id.profilehomepage);
+        progressBar = findViewById(R.id.progress_bar);
+        progressBar.setMax(75);
+        database = AppDatabase.getInstance(this);
+
+        //schedule
+        PeriodicWorkRequest createDocumentWork = new PeriodicWorkRequest.Builder(
+                CreateDocumentWorker.class,
+                1, // Repeat interval, 1 minute
+                TimeUnit.DAYS
+        ).build();
+
+        WorkManager.getInstance(this).enqueue(createDocumentWork);
+        //end schedule
+
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
+        final String currentDateeeee = dateFormat.format(new Date());
+
+
+        database = Room.databaseBuilder(getApplicationContext()
+                        , AppDatabase.class, "app_database").allowMainThreadQueries()
                 .build();
 
 
+        DayDao dayDao = database.days75Dao();
+
+
+        //room retrive
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                day da = dayDao.getDayById(currentDateeeee);
+                int datee = 0; // Initialize datee here, in case dayDao returns null
+                if (da != null) {
+                    datee = da.getDaycount();
+                }
+
+                final int finalDatee = datee; // Create a final variable to use inside runOnUiThread
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Update the UI elements on the main thread
+                        Day.setText(String.valueOf(finalDatee)); // Use finalDatee here
+                        progressBar.setProgress(finalDatee); // Use finalDatee here
+                    }
+                });
+            }
+        }).start();
 
 
 
+
+        //room retribe
 
 
         Calendar calendar = Calendar.getInstance();
@@ -108,10 +146,6 @@ public class homeeActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -119,47 +153,24 @@ public class homeeActivity extends AppCompatActivity {
         }
 
 
-
-
-
         threeBar = findViewById(R.id.threebar);
         threeBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               database.days75Dao().deleteDay();
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(homeeActivity.this, signupActivity.class));
+                finish();
+
             }
         });
 
 
-
-
-
-
-        //schedule
-        PeriodicWorkRequest createDocumentWork = new PeriodicWorkRequest.Builder(
-                CreateDocumentWorker.class,
-                1, // Repeat interval, 1 minute
-                TimeUnit.DAYS
-        ).build();
-
-        WorkManager.getInstance(this).enqueue(createDocumentWork);
-        //end schedule
-
-
-
-
-
-
-
-
-
-
-        drinkwater=findViewById(R.id.waterdrink);
-        eat=findViewById(R.id.eatlayout);
-        outdoor=findViewById(R.id.outdoorworkoutlayout);
-        indoor=findViewById(R.id.indoorworkoutlayout);
-        readbook=findViewById(R.id.readbooklayout);
-        progress=findViewById(R.id.takephotolayout);
+        drinkwater = findViewById(R.id.waterdrink);
+        eat = findViewById(R.id.eatlayout);
+        outdoor = findViewById(R.id.outdoorworkoutlayout);
+        indoor = findViewById(R.id.indoorworkoutlayout);
+        readbook = findViewById(R.id.readbooklayout);
+        progress = findViewById(R.id.takephotolayout);
 
         drinkwater.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,8 +179,6 @@ public class homeeActivity extends AppCompatActivity {
 
             }
         });
-
-
 
 
         eat.setOnClickListener(new View.OnClickListener() {
@@ -181,9 +190,6 @@ public class homeeActivity extends AppCompatActivity {
         });
 
 
-
-
-
         outdoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,8 +197,6 @@ public class homeeActivity extends AppCompatActivity {
 
             }
         });
-
-
 
 
         indoor.setOnClickListener(new View.OnClickListener() {
@@ -204,9 +208,6 @@ public class homeeActivity extends AppCompatActivity {
         });
 
 
-
-
-
         readbook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -214,7 +215,6 @@ public class homeeActivity extends AppCompatActivity {
 
             }
         });
-
 
 
         progress.setOnClickListener(new View.OnClickListener() {
@@ -226,15 +226,6 @@ public class homeeActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-
-
-
-        progressBar = findViewById(R.id.progress_bar);
         calendar = Calendar.getInstance();
         textView = findViewById(R.id.currentdate);
         Date currentDate = calendar.getTime();
@@ -244,12 +235,6 @@ public class homeeActivity extends AppCompatActivity {
 
 
 
-        //call  method
-        dayretrive(formattedDate);
-        coinandposition(formattedDate);
-        positionretrive();
-        //end
-
 
 
         rrecyclerView = findViewById(R.id.recyclerview);
@@ -258,77 +243,22 @@ public class homeeActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rrecyclerView.setLayoutManager(layoutManager);
 
-        progressBar.setMax(75);
-
-       fetchTopContributors();
-
-    }
-
-
-
-
-
-    private void signOutAndNavigateToSignUp() {
-        FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(homeeActivity.this, signupActivity.class));
-        finish();
-    }
-
-
-
-
-
-
-    //day retrive method
-
-    public  void dayretrive(String date)
-    {
-        FirebaseFirestore.getInstance()
-                .collection("USER")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("days")
-                .document(date)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        ImgDao imgDao = database.Img75Dao();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Image> imageList = imgDao.getAllImages();
+                cachedAdapter = new topcontributorAdapter(imageList);
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(value.exists())
-                        {
-                            String daycount=String.valueOf(value.getLong("daycount"));
-                            Day.setText(daycount);
-                            progressBar.setProgress(Integer.parseInt(daycount));
-                        }
+                    public void run() {
+                        rrecyclerView.setAdapter(cachedAdapter);
                     }
                 });
-    }
+            }
+        }).start();
 
-    //----------------------------------------------------------
-    //coin and position rettrive
-    public void coinandposition(String date) {
-        FirebaseFirestore.getInstance()
-                .collection("USER")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (value.exists()) {
-                            String coin = String.valueOf(value.getLong("coin"));
-                            String name = value.getString("User");
-                            String profile = value.getString("photo");
 
-                            // Check if the data has changed before updating the UI
-                            if (!coin.equals(cachedCoin) || !name.equals(cachedName) || !profile.equals(cachedProfile)) {
-                                cachedCoin = coin;
-                                cachedName = name;
-                                cachedProfile = profile;
-
-                                // Update the UI with the new data
-                                Glide.with(homeeActivity.this).load(profile).into(userProfile);
-                                Name.setText(name);
-                                Coin.setText("point: " + coin);
-                            }
-                        }
-                    }
-                });
     }
 
 
@@ -337,68 +267,5 @@ public class homeeActivity extends AppCompatActivity {
 
 
 
-    public void positionretrive()
-    {
-        FirebaseFirestore.getInstance()
-                .collection("USER")
-                .orderBy("coin", Query.Direction.DESCENDING)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        int userPosition = 1;
-                        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                     for(QueryDocumentSnapshot documentSnapshot:value)
-                     {
-                         String documentt=documentSnapshot.getId();
-                         if(documentt.equals(currentUserId))
-                         {
-                             Position.setText("position: "+String.valueOf(userPosition));
-                             break;
-                         }
-                         userPosition++;
-                     }
-
-                    }
-                });
-    }
-
-    //coin and position retrive
-
-
-    // Declare variables to hold cached data
-
-
-    public void fetchTopContributors() {
-        if (!cachedTopContributors.isEmpty() && cachedAdapter != null) {
-            // If the data is cached, use the cached data to update the RecyclerView
-            rrecyclerView.setAdapter(cachedAdapter);
-        } else {
-            FirebaseFirestore.getInstance()
-                    .collection("USER")
-                    .orderBy("coin", Query.Direction.DESCENDING)
-                    .limit(5)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<topcontributorModel> topcontributorModelList = new ArrayList<>();
-
-                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                    String imag = documentSnapshot.getString("photo");
-
-                                    topcontributorModel model = new topcontributorModel(imag);
-                                    topcontributorModelList.add(model);
-                                }
-
-                                cachedTopContributors = topcontributorModelList; // Cache the data
-                                cachedAdapter = new topcontributorAdapter(topcontributorModelList);
-                                rrecyclerView.setAdapter(cachedAdapter);
-                            }
-                        }
-                    });
-        }
-    }
 
 }

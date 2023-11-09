@@ -2,6 +2,7 @@ package com.example.a75dayshardchallenge;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.room.Room;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -26,16 +27,25 @@ import android.widget.Toast;
 import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
 import com.example.a75dayshardchallenge.Alarm.indoor;
 import com.example.a75dayshardchallenge.Alarm.read;
+import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
+import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
+import com.example.a75dayshardchallenge.RoomDatabase.day;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import android.Manifest;
 
 public class readActivity extends AppCompatActivity {
     private MaterialTimePicker timePicker;
     private Calendar calendar;
+    AppDatabase database;
+    day da;
+    DayDao dayDao;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     ImageView timepickerimg;
@@ -48,6 +58,7 @@ public class readActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
     private boolean timerRunning;
+    String formattedDate;
     private SharedPreferences sharedPreferences;
     private static final String PREFS_NAME = "ReadActivityPrefs"; // Different SharedPreferences file
     private static final String PREF_TIME_LEFT = "timeLeftInMillis";
@@ -64,6 +75,15 @@ public class readActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         timepickerimg = findViewById(R.id.time);
         Cancelreminder = findViewById(R.id.cancelreminder);
+
+        calendar=Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
+        formattedDate = sdf.format(currentDate);
+
+        database=AppDatabase.getInstance(this);
+        database= Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"app_database").build();
+        dayDao=database.days75Dao();
 
 
 
@@ -146,6 +166,20 @@ public class readActivity extends AppCompatActivity {
                 Submitbtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                da=dayDao.getDayById(formattedDate);
+
+                                if(da!=null)
+                                {
+                                    da.setField5(true);
+
+                                    dayDao.updateDay(da);
+                                }
+                            }
+                        }).start();
+
                         Toast.makeText(readActivity.this, "Submit", Toast.LENGTH_SHORT).show();
                     }
                 });
