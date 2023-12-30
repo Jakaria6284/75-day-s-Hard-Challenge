@@ -4,28 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    tools:context=".signupActivity">
+    android:background="#E1D2D2"
+    tools:context=".Activity.signupActivity">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView2"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_100sdp"
-        android:scaleType="centerCrop"
-        android:background="#554B4B"
-        app:layout_constraintBottom_toTopOf="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150sdp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.719" />
+
+
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/readbook" />
 
     <EditText
         android:id="@+id/name"
-        android:layout_width="380dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="224dp"
+        android:layout_width="@dimen/_280sdp"
+        android:layout_height="@dimen/_45sdp"
         android:background="@drawable/border"
         android:gravity="center"
         android:hint="Enter your name"
@@ -34,16 +33,16 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView2" />
 
     <EditText
         android:id="@+id/email"
-        android:layout_width="380dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/_280sdp"
+        android:layout_height="@dimen/_45sdp"
         android:background="@drawable/border"
         android:gravity="center"
+        android:layout_marginTop="@dimen/_15sdp"
         android:hint="Enter your Email"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
@@ -51,78 +50,75 @@
         android:textStyle="bold"
 
 
-        app:layout_constraintBottom_toTopOf="@+id/conpassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.954" />
+        app:layout_constraintEnd_toEndOf="@+id/name"
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/name" />
 
     <EditText
         android:id="@+id/password"
-        android:layout_width="380dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/_280sdp"
+        android:layout_height="@dimen/_45sdp"
         android:background="@drawable/border"
         android:gravity="center"
         android:hint="confarm password"
+        android:inputType="number"
+        android:layout_marginTop="@dimen/_15sdp"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/alreadyhaveAccount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.662" />
+        app:layout_constraintEnd_toEndOf="@+id/conpassword"
+        app:layout_constraintStart_toStartOf="@+id/conpassword"
+        app:layout_constraintTop_toBottomOf="@+id/conpassword" />
 
     <EditText
         android:id="@+id/conpassword"
-        android:layout_width="380dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/_280sdp"
+        android:layout_height="@dimen/_45sdp"
         android:background="@drawable/border"
         android:gravity="center"
+        android:layout_marginTop="@dimen/_15sdp"
         android:hint="Enter your password"
+        android:inputType="number"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.927" />
+        app:layout_constraintEnd_toEndOf="@+id/email"
+        app:layout_constraintStart_toStartOf="@+id/email"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <Button
         android:id="@+id/siognupbtnbtn"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:background="@drawable/border"
+        android:layout_width="@dimen/_180sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:background="@drawable/dash"
+        android:elevation="@dimen/_200sdp"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/_25sdp"
         android:text="signup"
-        android:textColor="#ffffff"
+        android:textColor="#000000"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name"
-        app:layout_constraintVertical_bias="0.741" />
+        app:layout_constraintStart_toStartOf="@+id/password"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <TextView
         android:id="@+id/alreadyhaveAccount"
-        android:layout_width="380dp"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_35sdp"
         android:gravity="center"
         android:text="Already have account"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/lottieAnimationView2"
-        app:layout_constraintVertical_bias="0.992" />
+        app:layout_constraintEnd_toEndOf="@+id/siognupbtnbtn"
+        app:layout_constraintHorizontal_bias="0.421"
+        app:layout_constraintStart_toStartOf="@+id/siognupbtnbtn"
+        app:layout_constraintTop_toBottomOf="@+id/siognupbtnbtn"
+        app:layout_constraintVertical_bias="0.264" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,57 +1,39 @@
-package com.example.a75dayshardchallenge;
+package com.example.a75dayshardchallenge.Activity;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.Manifest;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a75dayshardchallenge.R;
 import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
 import com.example.a75dayshardchallenge.RoomDatabase.day;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
-import java.io.ByteArrayOutputStream;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -60,13 +42,13 @@ public class signupActivity extends AppCompatActivity {
     private Button signupbtn;
     TextView alreadyHaveAccount;
     String photoUrl;
-    FirebaseStorage firebaseStorage;
-    StorageReference storageReference;
+
     CircleImageView imageView;
     EditText name, email, password, confrmPassword;
-    FirebaseFirestore firestore;
+
 
     FirebaseAuth firebaseAuth;
+     String currentDate;
     FirebaseUser currentUserr;
 
 
@@ -79,38 +61,19 @@ public class signupActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
-        firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference();
+        FirebaseAnalytics firebaseAnalytics=FirebaseAnalytics.getInstance(this);
+
 
         confrmPassword = findViewById(R.id.conpassword);
         signupbtn = findViewById(R.id.siognupbtnbtn);
         alreadyHaveAccount = findViewById(R.id.alreadyhaveAccount);
         firebaseAuth = FirebaseAuth.getInstance();
         currentUserr = firebaseAuth.getCurrentUser();
-        firestore = FirebaseFirestore.getInstance();
-        imageView = findViewById(R.id.lottieAnimationView2);
+        FirebaseApp.initializeApp(this);
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
 
-        database = AppDatabase.getInstance(this);
+        //imageView = findViewById(R.id.lottieAnimationView2);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
-        final String currentDate = dateFormat.format(new Date());
-
-
-        database = Room.databaseBuilder(getApplicationContext()
-                        , AppDatabase.class, "app_database").allowMainThreadQueries()
-                .build();
-
-
-        day initialEntry = new day();
-        initialEntry.setId(currentDate);
-        initialEntry.setField1(false);
-        initialEntry.setField2(false);
-        initialEntry.setField3(false);
-        initialEntry.setField4(false);
-        initialEntry.setField5(false);
-        initialEntry.setField6(false);
-        initialEntry.setDaycount(1);
-        database.days75Dao().insertDay(initialEntry);
 
 
         alreadyHaveAccount.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +192,22 @@ public class signupActivity extends AppCompatActivity {
     //--------------------
 
     private void checkEmailAndPassword() {
+        String emailText = email.getText().toString();
+        String passwordText = password.getText().toString();
+        String confirmPasswordText = confrmPassword.getText().toString();
+
+        if (TextUtils.isEmpty(emailText) || TextUtils.isEmpty(passwordText) || TextUtils.isEmpty(confirmPasswordText)) {
+            // Show an error message or handle the case where any field is empty
+            Toast.makeText(signupActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!passwordText.equals(confirmPasswordText)) {
+            // Show an error message or handle the case where passwords don't match
+            Toast.makeText(signupActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (password.getText().toString().matches(confrmPassword.getText().toString())) {
             firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -236,12 +215,47 @@ public class signupActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful())
                             {
+                                database = AppDatabase.getInstance(signupActivity.this);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
+                                currentDate = dateFormat.format(new Date());
+
+
+                                database = Room.databaseBuilder(getApplicationContext()
+                                                , AppDatabase.class, "app_database").allowMainThreadQueries()
+                                        .build();
+
+
+                                day initialEntry = new day();
+                                initialEntry.setId(currentDate);
+                                initialEntry.setField1(false);
+                                initialEntry.setField2(false);
+                                initialEntry.setField3(false);
+                                initialEntry.setField4(false);
+                                initialEntry.setField5(false);
+                                initialEntry.setField6(false);
+                                initialEntry.setDaycount(1);
+                                database.days75Dao().insertDay(initialEntry);
+
                                 Toast.makeText(signupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(signupActivity.this, homeeActivity.class));
                                 finish();
+                            }else {
+                                String errorMessage = task.getException().getMessage();
+                                if (errorMessage != null && errorMessage.contains("email address is already in use")) {
+                                    // The email is already taken
+                                    Toast.makeText(signupActivity.this, "Email address is already taken", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(signupActivity.this, "Signup failed. Please try again.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     });
         }
     }
+
+
+
+
+
 }

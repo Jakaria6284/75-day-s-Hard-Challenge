@@ -5,6 +5,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-sdk
+        android:minSdkVersion="24"
+        android:targetSdkVersion="34" />
+
 
     <application
         android:allowBackup="true"
@@ -15,57 +22,67 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme._75DaysHardChallenge"
-        tools:targetApi="31">
+       >
+
+        <activity
+            android:name=".Activity.progress"
+            android:exported="false" />
+
         <activity
             android:name=".photoview"
             android:exported="false" />
         <activity
             android:name=".databsecreate"
-            android:exported="true"></activity>
-        <activity
-            android:name=".progressphotoActivity"
             android:exported="false" />
         <activity
-            android:name=".readActivity"
+            android:name=".Activity.progressphotoActivity"
             android:exported="false" />
         <activity
-            android:name=".indooractivity"
+            android:name=".Activity.readActivity"
             android:exported="false" />
         <activity
-            android:name=".outdoorworkoutActivity"
+            android:name=".Activity.indooractivity"
             android:exported="false" />
         <activity
-            android:name=".eathealthyActivity"
+            android:name=".Activity.outdoorworkoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.eathealthyActivity"
             android:exported="true" />
         <activity
-            android:name=".uploadActivity"
-            android:exported="true" />
-        <activity
-            android:name=".loginActivity"
+            android:name=".Activity.uploadActivity"
             android:exported="false" />
         <activity
-            android:name=".signupActivity"
-            android:exported="true" />
-        <activity
-            android:name=".homeeActivity"
+            android:name=".Activity.loginActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.signupActivity"
+            android:exported="false" >
+
+        </activity>
+        <activity
+            android:name=".Activity.homeeActivity"
+            android:exported="false" >
+
+
+        </activity>
+        <activity
+            android:name=".Activity.MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-
-        <receiver android:name=".Alarm.AlarmReceiver">
-
-            <!-- Intent filters or other configuration here -->
-        </receiver>
-
-        <service android:name=".Model.TimeService" />
-        <service android:name=".Model.outerTimeService" />
+        <service android:name=".Model.TimeService"
+            android:stopWithTask="true"
+            />
+        <service android:name=".Model.outerTimeService"
+            android:stopWithTask="true"
+            />
     </application>
 
 </manifest>

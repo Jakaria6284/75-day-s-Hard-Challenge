@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#060C2B"
+    tools:context=".Activity.progress">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/parentprogressAndprivacy"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_130sdp"
+        android:layout_marginStart="@dimen/_12sdp"
+
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.078">
+
+        <LinearLayout
+            android:id="@+id/progressdaily"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:background="@drawable/dash"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/regularprogress" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:fontFamily="sans-serif-black"
+                android:text="Regular Progress"
+                android:textColor="@color/white"
+                 />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/privacypolicy"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:background="@drawable/dash"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/privacy_policy" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:fontFamily="sans-serif-black"
+                android:text="Privacy policy"
+                android:textColor="@color/white"
+                 />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/parentpermissonanddelet"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_130sdp"
+        android:layout_marginStart="@dimen/_12sdp"
+
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.411">
+
+        <LinearLayout
+            android:id="@+id/Deleteaccount"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:background="@drawable/dash"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/delete" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:fontFamily="sans-serif-black"
+                android:text="Delete Account"
+                android:textColor="@color/white"
+                 />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/whypermisson"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:background="@drawable/dash"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center"
+                android:fontFamily="sans-serif-black"
+                android:text="why \npermission\n need ?"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/rateandrule"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_130sdp"
+        android:layout_marginStart="@dimen/_12sdp"
+
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.743">
+
+        <LinearLayout
+            android:id="@+id/rateus"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:background="@drawable/dash"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/baseline_star_border_24" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:fontFamily="sans-serif-black"
+                android:text="Rate Us"
+                android:textColor="@color/white"
+                 />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rule"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:background="@drawable/dash"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center"
+                android:text="Rule of \n this \nChallenge"
+                android:fontFamily="sans-serif-black"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/answerpermission"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_height="match_parent"
+       android:visibility="gone"
+        android:padding="@dimen/_8sdp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/_14ssp"
+
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="@string/whyneed"
+
+            />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollviews"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_8sdp"
+            android:orientation="vertical" >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="Rule\'s of 75 Days Hard Fitness Challenge:"
+                android:gravity="start"
+                android:layout_gravity="start"
+                android:layout_marginTop="@dimen/_4sdp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/_14ssp"
+               android:textColor="@color/white"
+                android:padding="@dimen/_8sdp"
+                android:gravity="start"
+                android:layout_gravity="start"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:text="Rule\'s of 75 Days Hard Fitness Challenge: \n \nFollow a Diet: Choose a diet and stick to it. This could be anything from counting calories to following a specific eating plan.\n\nTwo Workouts a Day: Engage in two separate workouts every day, each lasting at least 45 minutes. One of these workouts must be outdoors, regardless of the weather.\n\nDrink a Gallon of Water: Consume at least one gallon (128 ounces) of water each day.\n\nRead 10 Pages: Read at least 10 pages of a non-fiction book every day.\n\nTake a Progress Picture: Take a daily progress picture to track physical changes over the 75 days.\n\n
+"
+
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/_14ssp"
+
+               android:textColor="@color/white"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:text="Warning:\n\n
+
+Overtraining and Injury Risk: Engaging in two 45-minute workouts daily, especially if not accustomed to such intensity, can increase the risk of overtraining and injury. It\'s important to listen to your body, allow for adequate rest, and vary workouts to prevent overuse injuries.\n\n
+
+Dehydration Risk: Drinking a gallon of water daily can be excessive for some individuals and may lead to electrolyte imbalances. It\'s crucial to stay hydrated, but excessive water intake without considering individual needs and conditions can pose risks.\n\n
+
+Nutritional Deficiencies: Following a strict diet without considering individual nutritional needs may result in deficiencies. It\'s important to ensure the chosen diet provides essential nutrients and consult with a healthcare professional or registered dietitian if needed.\n\n
+
+Mental Health Impact: The pressure to adhere strictly to the challenge\'s rules, especially with no cheat meals, can potentially contribute to disordered eating patterns or negatively impact mental health. It's crucial to prioritize mental well-being and seek support if needed.\n\n
+
+Lack of Flexibility: The challenge's strict rules may not be suitable for everyone. Life circumstances, medical conditions, or other personal factors may require flexibility in workout routines or dietary choices.\n\n"
+
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/_14ssp"
+                android:gravity="start"
+                android:textColor="@color/white"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:text="Consult a doctor before taking this challenge\n\n\n
+        if you are considering undertaking the 75 Hard Challenge or any similar intense fitness and lifestyle program, it is strongly recommended that you consult with a healthcare professional, such as a physician or a nutritionist, before starting. This is especially important if you have any pre-existing medical conditions, concerns, or if you are unsure about how the challenge may affect your health.
+
+A healthcare professional can assess your individual health status, provide personalized advice, and help you determine whether such a rigorous program is suitable for you. They can also offer guidance on aspects like workout intensity, dietary requirements, and potential health risks.\n\n
+
+Remember, your health and well-being should always be the top priority, and seeking professional advice before embarking on a challenging fitness program is a responsible and proactive approach."
+
+                />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/logout"
+        android:layout_width="@dimen/_130sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:background="@drawable/dash"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/_30sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rateandrule">
+
+        <ImageView
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_gravity="center"
+            android:src="@drawable/logout" />
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:gravity="center"
+            android:text="logout"
+        android:fontFamily="sans-serif-black"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16ssp"
+           />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

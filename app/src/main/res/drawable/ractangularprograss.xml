@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background rectangle with rounded corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#DDD" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    <!-- Progress rectangle with rounded corners (scaled to fill from bottom to top) -->
+    <item android:id="@android:id/progress">
+        <scale
+            android:scaleHeight="100%"
+            android:scaleGravity="bottom">
+            <shape android:shape="rectangle">
+                <solid android:color="#16581F" />
+                <corners android:radius="20dp" />
+            </shape>
+        </scale>
+    </item>
+</layer-list>

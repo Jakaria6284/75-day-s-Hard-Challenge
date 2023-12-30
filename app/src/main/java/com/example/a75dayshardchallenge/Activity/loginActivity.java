@@ -1,7 +1,8 @@
-package com.example.a75dayshardchallenge;
+package com.example.a75dayshardchallenge.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +15,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a75dayshardchallenge.R;
+import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
+import com.example.a75dayshardchallenge.RoomDatabase.day;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class loginActivity extends AppCompatActivity {
     private TextView donthaveAccount;
@@ -26,6 +37,7 @@ public class loginActivity extends AppCompatActivity {
     private EditText email,password;
     FirebaseAuth firebaseAuth;
     FirebaseUser currentUser;
+    AppDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +50,9 @@ public class loginActivity extends AppCompatActivity {
         password=findViewById(R.id.email);
         firebaseAuth=FirebaseAuth.getInstance();
         currentUser= firebaseAuth.getCurrentUser();
+        FirebaseApp.initializeApp(this);
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+        FirebaseAnalytics firebaseAnalytics=FirebaseAnalytics.getInstance(this);
 
         donthaveAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +131,18 @@ public class loginActivity extends AppCompatActivity {
     private void cheackEmailAndPasswrd()
     {
 
+        String emailText = email.getText().toString();
+        String passwordText = password.getText().toString();
+
+
+        if (TextUtils.isEmpty(emailText) || TextUtils.isEmpty(passwordText) ) {
+            // Show an error message or handle the case where any field is empty
+            Toast.makeText(loginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+
 
         if(password.length()>=6)
         {
@@ -125,6 +152,29 @@ public class loginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful())
                             {
+                                if(database==null) {
+                                    database = AppDatabase.getInstance(loginActivity.this);
+
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy", Locale.getDefault());
+                                    String currentDate = dateFormat.format(new Date());
+
+
+                                    database = Room.databaseBuilder(getApplicationContext()
+                                                    , AppDatabase.class, "app_database").allowMainThreadQueries()
+                                            .build();
+
+
+                                    day initialEntry = new day();
+                                    initialEntry.setId(currentDate);
+                                    initialEntry.setField1(false);
+                                    initialEntry.setField2(false);
+                                    initialEntry.setField3(false);
+                                    initialEntry.setField4(false);
+                                    initialEntry.setField5(false);
+                                    initialEntry.setField6(false);
+                                    initialEntry.setDaycount(1);
+                                    database.days75Dao().insertDay(initialEntry);
+                                }
                                 Intent intent=new Intent(loginActivity.this, homeeActivity.class);
                                 startActivity(intent);
                                 finish();

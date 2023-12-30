@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
    android:background="#0D0720"
-    tools:context=".homeeActivity">
+    tools:context=".Activity.homeeActivity">
+
+
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -64,7 +66,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="position:110"
+                android:text="Today Status:"
+
                 android:textColor="#ffffff"
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="normal" />
@@ -117,6 +120,8 @@
                     android:textSize="@dimen/_14ssp"
                     android:textStyle="bold" />
             </LinearLayout>
+
+
         </LinearLayout>
 
 
@@ -127,7 +132,7 @@
         android:id="@+id/profilehomepage"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
-        android:src="@drawable/jk"
+        android:src="@drawable/llogo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.046"
@@ -138,6 +143,7 @@
 
     <ImageView
 
+        android:id="@+id/imageView2"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_20sdp"
         android:scaleType="fitCenter"
@@ -145,18 +151,33 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/currentdate"
         app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toStartOf="parent"
 
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/currentdate"
         app:layout_constraintVertical_bias="0.011" />
 
     <ImageView
         android:id="@+id/threebar"
-        android:layout_width="@dimen/_30sdp"
+        android:layout_width="@dimen/_25sdp"
         android:layout_height="@dimen/_30sdp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="@dimen/_12sdp"
         android:scaleType="fitCenter"
         android:src="@drawable/bar"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.545" />
+
+    <ImageView
+        android:id="@+id/modechange"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginEnd="128dp"
         android:layout_marginBottom="@dimen/_12sdp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -184,7 +205,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_20sdp"
-        android:text="Jakaria"
+        android:text="Time to conquer the day!"
+
         android:textColor="#ffffff"
         android:textSize="@dimen/_13ssp"
         android:textStyle="normal"
@@ -228,13 +250,34 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.411" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="@dimen/_300sdp"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/swipeRefreshLayout"
+        app:layout_constraintEnd_toEndOf="@+id/swipeRefreshLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+        <include layout="@layout/shimmer" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/_70sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70sdp" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <TextView
 
@@ -246,17 +289,19 @@
         android:textColor="#ffffff"
         android:textSize="@dimen/_13ssp"
         android:textStyle="bold"
+        android:layout_marginStart="@dimen/_6sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.013"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerview"
+        app:layout_constraintTop_toBottomOf="@+id/swipeRefreshLayout"
         app:layout_constraintVertical_bias="0.0" />
 
     <ScrollView
-        android:layout_width="409dp"
-        android:layout_height="260dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_210sdp"
         android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3">
@@ -270,7 +315,8 @@
                 android:id="@+id/waterdrink"
                 android:layout_width="@dimen/_300sdp"
                 android:layout_height="@dimen/_80sdp"
-                android:layout_marginStart="@dimen/_8sdp"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/_6sdp"
                 android:background="@drawable/dash"
                 android:orientation="horizontal">
 
@@ -287,7 +333,9 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+
                     <TextView
+                        android:id="@+id/gallonwater"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_8sdp"
@@ -317,6 +365,7 @@
                 android:id="@+id/eatlayout"
                 android:layout_width="@dimen/_300sdp"
                 android:layout_height="@dimen/_80sdp"
+                android:gravity="center"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:background="@drawable/dash"
@@ -336,6 +385,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/diet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_8sdp"
@@ -366,14 +416,15 @@
                 android:layout_width="@dimen/_300sdp"
                 android:layout_height="@dimen/_80sdp"
                 android:layout_marginTop="@dimen/_12sdp"
-                android:layout_marginStart="@dimen/_8sdp"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/_5sdp"
                 android:background="@drawable/dash"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="@dimen/_100sdp"
                     android:layout_height="@dimen/_70sdp"
-                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_1sdp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:src="@drawable/outdoorworkout" />
 
@@ -381,9 +432,11 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/_5sdp"
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/outdoortxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_8sdp"
@@ -413,6 +466,7 @@
                 android:id="@+id/indoorworkoutlayout"
                 android:layout_width="@dimen/_300sdp"
                 android:layout_height="@dimen/_80sdp"
+                android:gravity="center"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:background="@drawable/dash"
@@ -432,6 +486,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/indoortxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_8sdp"
@@ -461,6 +516,7 @@
                 android:id="@+id/readbooklayout"
                 android:layout_width="@dimen/_300sdp"
                 android:layout_height="@dimen/_80sdp"
+                android:gravity="center"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:background="@drawable/dash"
@@ -480,6 +536,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/readtxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_8sdp"
@@ -509,6 +566,7 @@
                 android:id="@+id/takephotolayout"
                 android:layout_width="@dimen/_300sdp"
                 android:layout_height="@dimen/_80sdp"
+                android:gravity="center"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:background="@drawable/dash"
                 android:layout_marginStart="@dimen/_8sdp"
@@ -527,6 +585,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/phototxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Take a progress picture "
@@ -551,6 +610,7 @@
                 </LinearLayout>
 
             </LinearLayout>
+
 
 
         </LinearLayout>

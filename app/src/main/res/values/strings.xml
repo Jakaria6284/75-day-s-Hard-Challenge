@@ -1,3 +1,26 @@
 <resources>
-    <string name="app_name">75 day\'s Hard Challenge</string>
+    <string name="app_name">75 Day Hard Fitness Challenge</string>
+
+
+    <string name="whyneed">"Post Notification Permission:
+
+Stay informed and engaged with timely updates and notifications about app activities.\n\n if you are using Android 13  and not give notification permission you will not set your won reminder
+
+WRITE_EXTERNAL_STORAGE and READ_EXTERNAL_STORAGE Permissions:
+
+Facilitate seamless photo progress tracking by enabling the uploading and accessing of images on your device.
+
+INTERNET and ACCESS_NETWORK Permissions:
+
+Ensure connectivity for accessing online features, allowing you to fully utilize the app's capabilities and services.\n\nTo optimize your experience in our app, we request two permissions during runtime:\n
+
+These permissions are solely utilized to enhance your user experience, and we prioritize the security and privacy of your data."</string>
+
+
+
+
+
+
+
+
 </resources>

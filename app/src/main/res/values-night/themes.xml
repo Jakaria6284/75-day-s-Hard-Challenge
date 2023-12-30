@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme._75DaysHardChallenge" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your dark theme here. -->
+        <item name="android:windowBackground">#0D0720</item>
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/gray</item>
         <item name="colorOnPrimary">@color/black</item>

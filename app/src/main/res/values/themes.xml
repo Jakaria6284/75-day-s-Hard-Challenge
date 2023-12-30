@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme._75DaysHardChallenge" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">#0D0720</item>
         <!-- Customize your theme colors -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/gray</item>

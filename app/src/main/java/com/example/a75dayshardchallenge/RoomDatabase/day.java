@@ -4,12 +4,12 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+
 
 @Entity
 public class day {
 
-   @NonNull
+
    @ColumnInfo
 
    String id;
@@ -28,6 +28,8 @@ public class day {
 
     @ColumnInfo
     int  daycount;
+    @ColumnInfo
+    long poinCount;
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo
@@ -95,6 +97,14 @@ public class day {
 
     public void setDaycount(int daycount) {
         this.daycount = daycount;
+    }
+
+    public long getPoinCount() {
+        return poinCount;
+    }
+
+    public void setPoinCount(long poinCount) {
+        this.poinCount = poinCount;
     }
 
     public int getIdcard() {

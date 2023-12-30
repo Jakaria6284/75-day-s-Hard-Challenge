@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    id ("com.google.firebase.crashlytics")
 }
 
 android {
@@ -10,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.example.a75dayshardchallenge"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -39,20 +40,21 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("androidx.core:core:1.7.0")
 
-    implementation ("com.airbnb.android:lottie:6.1.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation ("com.airbnb.android:lottie:6.3.0")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.7.0")
-    implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
-    implementation("com.google.firebase:firebase-storage-ktx:20.2.1")
+    implementation("com.google.firebase:firebase-auth-ktx")
     implementation ("com.intuit.sdp:sdp-android:1.1.0")
     implementation ("com.intuit.ssp:ssp-android:1.1.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
-    implementation ("androidx.work:work-runtime:2.8.1")
+    implementation ("androidx.work:work-runtime:2.9.0")
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation( "androidx.room:room-runtime:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
 
 
-    implementation( "androidx.room:room-runtime:2.6.0")
-    annotationProcessor ("androidx.room:room-compiler:2.6.0")
 }

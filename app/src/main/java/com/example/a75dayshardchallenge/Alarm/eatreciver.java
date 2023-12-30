@@ -1,20 +1,14 @@
 package com.example.a75dayshardchallenge.Alarm;
 
 import android.Manifest;
-import android.app.Service;
 import android.app.PendingIntent;
-import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
-import android.os.IBinder;
 import android.os.Build;
-import android.provider.Settings;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -24,8 +18,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.a75dayshardchallenge.R;
-import com.example.a75dayshardchallenge.eathealthyActivity;
-import com.example.a75dayshardchallenge.uploadActivity;
+import com.example.a75dayshardchallenge.Activity.eathealthyActivity;
 
 public class eatreciver extends Worker {
     MediaPlayer mediaPlayer;
@@ -68,7 +61,7 @@ public class eatreciver extends Worker {
 
         // Build and display the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "eathealthyyy")
-                .setSmallIcon(R.drawable.bar)
+                .setSmallIcon(R.drawable.notification)
                 .setContentTitle("Eat Healthy")
                 .setContentText("it's time to Eat Healthy")
                 .setContentIntent(pendingIntent)

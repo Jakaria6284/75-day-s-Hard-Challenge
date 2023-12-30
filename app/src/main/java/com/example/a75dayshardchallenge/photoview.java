@@ -5,10 +5,15 @@ import static kotlinx.coroutines.CoroutineScopeKt.CoroutineScope;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.room.Room;
@@ -36,6 +41,11 @@ public class photoview extends AppCompatActivity {
         String imagePath = getIntent().getStringExtra("imagePath");
         int id = getIntent().getIntExtra("ID", 0);
         database = AppDatabase.getInstance(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.bblack));
+        }
 
         database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "app_database").allowMainThreadQueries().build();
         imgDao = database.Img75Dao();
@@ -72,11 +82,14 @@ public class photoview extends AppCompatActivity {
         }).start();
 
 
-        if (imagePath != null) {
-            // Load and display the image using the file path
-            // Bitmap bitmap = BitmapFactory.decodeFile(img);
-            //imageView.setImageBitmap(bitmap);
-        }
+      imageView.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+
+              imgDao.deletebyid(id);
+             
+          }
+      });
 
 
     }

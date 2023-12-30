@@ -1,6 +1,9 @@
-package com.example.a75dayshardchallenge;
+package com.example.a75dayshardchallenge.Activity;
 
-import androidx.annotation.NonNull;
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.room.Room;
@@ -10,58 +13,66 @@ import androidx.work.WorkManager;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.a75dayshardchallenge.Alarm.AlarmReceiver;
 import com.example.a75dayshardchallenge.Alarm.outdoorrecevier;
 import com.example.a75dayshardchallenge.Model.TimeService;
 import com.example.a75dayshardchallenge.Model.outerTimeService;
+import com.example.a75dayshardchallenge.R;
 import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
 import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
 import com.example.a75dayshardchallenge.RoomDatabase.day;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import android.Manifest;
 
 public class outdoorworkoutActivity extends AppCompatActivity {
 
     private MaterialTimePicker timePicker;
+    private outerTimeService mBoundService;
+    private boolean mIsBound = false;
     private Calendar calendar;
     ImageView timepickerimg;
-    private AlarmManager alarmManager;
-    private PendingIntent pendingIntent;
+    private long updatedDefaultTime = DEFAULT_TIME;
     day da;
     DayDao dayDao;
 
-    private TextView timerTextView;
+  //  private TextView timerTextView;
     private Button startPauseButton;
     TextView Submitbtn;
     private CountDownTimer countDownTimer;
@@ -75,18 +86,84 @@ public class outdoorworkoutActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "UploadActivityPrefs"; // Different SharedPreferences file
     private static final String PREF_TIME_LEFT = "timeLeftInMillis";
     private static final String PREF_TIMER_RUNNING = "timerRunning";
+
+
     private static final long DEFAULT_TIME = 1200000; // Default time, 20 minutes
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            outerTimeService.LocalBinder binder = (outerTimeService.LocalBinder) service;
+            mBoundService = binder.getService();
+            mBoundService.updateNotification(); // Ensure notification is updated on connection
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBoundService = null;
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outdoorworkout);
-        timerTextView = findViewById(R.id.timer);
+       // timerTextView = findViewById(R.id.timer);
         startPauseButton = findViewById(R.id.drinkaddbtn);
         Submitbtn = findViewById(R.id.submitbtn);
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         timepickerimg = findViewById(R.id.time);
-        Cancelreminder = findViewById(R.id.cancelreminder);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.bblack));
+        }
+        FirebaseAnalytics firebaseAnalytics=FirebaseAnalytics.getInstance(this);
+        FirebaseApp.initializeApp(this);
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+
+
+
+        bindToService();
+        startTimer();
+        IntentFilter filter = new IntentFilter("TIMER_FINISHED");
+        registerReceiver(timerFinishedReceiver, filter);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        OnBackPressedCallback onBackPressedCallback=new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                Intent intent=new Intent(outdoorworkoutActivity.this, homeeActivity.class);
+
+
+                // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                overridePendingTransition(R.anim.left, R.anim.right);
+                finish();
+
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this,onBackPressedCallback);
+
+        // Cancelreminder = findViewById(R.id.cancelreminder);
         database=AppDatabase.getInstance(this);
 
         calendar=Calendar.getInstance();
@@ -104,12 +181,13 @@ public class outdoorworkoutActivity extends AppCompatActivity {
 
 
 
-        if (!isServiceRunning(TimeService.class)) {
+        if (!isServiceRunning(outerTimeService.class)) {
             Intent serviceIntent = new Intent(this, outerTimeService.class);
             startService(serviceIntent);
+            Log.d(TAG, "TimeService is running");
         }
 
-        startTimer();
+
 
         Submitbtn.setBackgroundColor(getResources().getColor(R.color.bbblack));
 
@@ -168,11 +246,58 @@ public class outdoorworkoutActivity extends AppCompatActivity {
 
         updateUI();
     }
+    //----------------------------------------
+
+
+
+
+    private void bindToService() {
+        Intent serviceIntent = new Intent(this, outerTimeService.class);
+        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+        mIsBound = true;
+    }
+
+    private void unbindFromService() {
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+    }
+
+
+
+
+
+
+
 
     private void startTimer() {
+        // Log to indicate the start of the timer
+       // Log.d(TAG, "startTimer: Starting timer");
+        Log.d("outdoorworkoutActivity", "startTimer: Timer running: " + timerRunning);
+
+        // Start the service immediately
+        Intent serviceIntent = new Intent(this, outerTimeService.class);
+        startService(serviceIntent);
+
+        // Bind to the service
+        bindToService();
+
+        if (mBoundService != null) {
+            // Set the timer as running in the service
+            mBoundService.setTimerRunning(true);
+            // Show the foreground notification
+            mBoundService.updateNotification();
+        }
+
+        // Log to indicate the foreground notification call
+        Log.d(TAG, "startTimer: Foreground notification called");
+
+        // Cancel any existing CountDownTimer
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
+
         Submitbtn.setBackgroundColor(getResources().getColor(R.color.bbblack));
         Submitbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,6 +307,7 @@ public class outdoorworkoutActivity extends AppCompatActivity {
             }
         });
 
+        // Start a new CountDownTimer
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -196,19 +322,7 @@ public class outdoorworkoutActivity extends AppCompatActivity {
                 Submitbtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                da=dayDao.getDayById(formattedDate);
 
-                                if(da!=null)
-                                {
-                                    da.setField3(true);
-
-                                    dayDao.updateDay(da);
-                                }
-                            }
-                        }).start();
                     }
                 });
                 timerRunning = false;
@@ -221,19 +335,44 @@ public class outdoorworkoutActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private void pauseTimer() {
+    public void pauseTimer() {
+        Log.d("outdoorworkoutActivity", "pauseTimer: Pausing timer");
+        bindToService();
+        if (mBoundService != null) {
+            mBoundService.setTimerRunning(false);
+        }
         if (countDownTimer != null) {
             countDownTimer.cancel();
             timerRunning = false;
             updateUI();
+            Log.d("outdoorworkoutActivity", "pauseTimer: Timer paused");
+        }
+        unbindFromService();
+
+        if (!timerRunning) {
+            stopBackgroundService();
+            Log.d("Outer Service", "Service stopped successfully");
+        }
+        if (timerFinishedReceiver != null) {
+            try {
+                unregisterReceiver(timerFinishedReceiver);
+            } catch (IllegalArgumentException e) {
+                // Receiver not registered, ignore the exception
+            }
         }
     }
 
+
     private void updateUI() {
+        if (mBoundService != null) {
+            timeLeftInMillis = mBoundService.getTimeLeftInMillis();
+            timerRunning = mBoundService.isTimerRunning();
+        }
+
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
         String timeLeftFormatted = String.format("%02d:%02d", minutes, seconds);
-        timerTextView.setText(timeLeftFormatted);
+        //timerTextView.setText(timeLeftFormatted);
 
         startPauseButton.setText(timerRunning ? "Pause" : "Start");
     }
@@ -241,19 +380,45 @@ public class outdoorworkoutActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+      /*  SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong(PREF_TIME_LEFT, timeLeftInMillis);
         editor.putBoolean(PREF_TIMER_RUNNING, timerRunning);
         editor.apply();
 
-        unregisterReceiver(timerFinishedReceiver);
+        if (!timerRunning) {
+            stopBackgroundService();
+        }
+
+        // Unregister the receiver only if the timer is not running
+        if (timerFinishedReceiver != null && !timerRunning) {
+            try {
+                unregisterReceiver(timerFinishedReceiver);
+            } catch (IllegalArgumentException e) {
+                // Receiver not registered, ignore the exception
+            }
+        }*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // Ensure the service is running and has the correct timer state
+        if (mBoundService != null) {
+            // Get the last known time from the service
+            timeLeftInMillis = mBoundService.getTimeLeftInMillis();
 
-        if (sharedPreferences.contains(PREF_TIME_LEFT)) {
+            if (mBoundService.isTimerRunning()) {
+                // If the timer is running, start it in the activity
+                startTimer();
+            } else {
+                // If the timer is paused, update the UI
+                updateUI();
+            }
+        }
+
+
+       /* if (sharedPreferences.contains(PREF_TIME_LEFT)) {
             timeLeftInMillis = sharedPreferences.getLong(PREF_TIME_LEFT, DEFAULT_TIME);
             timerRunning = sharedPreferences.getBoolean(PREF_TIMER_RUNNING, false);
 
@@ -269,7 +434,13 @@ public class outdoorworkoutActivity extends AppCompatActivity {
         }
 
         IntentFilter filter = new IntentFilter("TIMER_FINISHE");
+        registerReceiver(timerFinishedReceiver, filter);*/
+        IntentFilter filter = new IntentFilter("TIMER_FINISHED");
         registerReceiver(timerFinishedReceiver, filter);
+
+        if (mBoundService != null && mBoundService.isTimerRunning()) {
+            mBoundService.updateNotification();
+        }
     }
 
     private void createAlarm() {
@@ -312,18 +483,80 @@ public class outdoorworkoutActivity extends AppCompatActivity {
     private BroadcastReceiver timerFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Handle the timer finished event
-            if ("TIMER_FINISHE".equals(intent.getAction())) {
-                // Update your UI here, e.g., change button color or enable the button
+            if ("TIMER_FINISHED".equals(intent.getAction())) {
+                // Timer finished, enable Submitbtn
                 Submitbtn.setEnabled(true);
                 Submitbtn.setBackgroundColor(getResources().getColor(R.color.green));
+                Submitbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                da = dayDao.getDayById(formattedDate);
+
+                                if (da != null) {
+                                    da.setField3(true);
+                                    long point=da.getPoinCount()+20;
+                                    da.setPoinCount(point);
+
+                                    dayDao.updateDay(da);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(outdoorworkoutActivity.this, "Entry Add Successfully and Earn 20 point", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                    }
+                });
             }
         }
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void stopBackgroundService() {
+        Intent stopServiceIntent = new Intent(this, outerTimeService.class);
+        stopService(stopServiceIntent);
+    }
+
+
     protected void onDestroy() {
         super.onDestroy();
-        stopService(new Intent(this, outerTimeService.class));
+       // stopBackgroundService();
+
+
+        unbindFromService();
     }
 
     @Override

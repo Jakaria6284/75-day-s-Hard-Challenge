@@ -4,139 +4,95 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#050A2B"
-    tools:context=".outdoorworkoutActivity">
+    android:background="#0D0720"
+    tools:context=".Activity.outdoorworkoutActivity">
 
-    <LinearLayout
-        android:id="@+id/drinkwater"
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_400sdp"
-        android:orientation="vertical"
-
+        android:layout_height="@dimen/_300sdp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/outdoorworkout" />
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_300sdp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/outdoorworkout" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/timer"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lottieAnimationView3"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/timer" />
 
-        <TextView
-            android:id="@+id/timer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Submit"
-            android:textColor="#ffff"
-            android:textStyle="bold"
-            android:textSize="@dimen/_28ssp"
-            android:layout_marginStart="@dimen/_99sdp"
-            />
+    <Button
+        android:id="@+id/drinkaddbtn"
+        android:layout_width="@dimen/_180sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginBottom="28dp"
 
-        <Button
-            android:id="@+id/drinkaddbtn"
-            android:layout_width="@dimen/_180sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:text="Submit"
-            android:layout_marginTop="@dimen/_20sdp"
-
-            android:textColor="#000000"
-            android:textStyle="bold"
-            android:textSize="@dimen/_18ssp"
-            android:layout_marginStart="@dimen/_60sdp"
-            android:background="@drawable/btnback"/>
-
-
-
-    </LinearLayout>
+        android:background="@drawable/btnback"
+        android:text="Submit"
+        android:textColor="#000000"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/submitbtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timer"
+        app:layout_constraintVertical_bias="0.071" />
 
     <TextView
         android:id="@+id/submitbtn"
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_30sdp"
+
         android:background="@drawable/submitbtn"
         android:gravity="center"
-        android:text="Add your Entry"
+        android:text="Add Your Entry"
         android:textColor="#FBFAFA"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.449"
+        app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/drinkwater"
-        app:layout_constraintVertical_bias="0.116" />
+        app:layout_constraintTop_toBottomOf="@+id/timer"
+        app:layout_constraintVertical_bias="0.469" />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="1dp"
-        android:layout_marginTop="56dp"
-        android:background="#ffffff"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="156dp"
 
-    <View
-
-        android:id="@+id/view"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="1dp"
-        android:layout_marginTop="56dp"
-        android:background="#ffffff"
+        android:gravity="center"
+        android:text="Your 20 min Time Start .wait some second you can see timer in forground notification"
+        android:textColor="#FBFAFA"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn" />
-
-    <TextView
-
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:text="Set reminder"
-        android:textColor="#ffff"
-        android:textSize="@dimen/_14ssp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/divider"
-        app:layout_constraintHorizontal_bias="0.88"
-        app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/submitbtn"
-        app:layout_constraintVertical_bias="0.244" />
+        app:layout_constraintTop_toBottomOf="@+id/drinkaddbtn"
+        app:layout_constraintVertical_bias="0.236" />
 
     <ImageView
         android:id="@+id/time"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_60sdp"
         android:src="@drawable/baseline_access_alarm_24"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        android:layout_marginBottom="@dimen/_15sdp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.764" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/cancelreminder"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:background="@drawable/btnback"
-        android:text="Cencel"
-        android:visibility="gone"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.943"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.594" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

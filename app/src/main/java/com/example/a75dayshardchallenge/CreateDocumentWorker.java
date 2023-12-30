@@ -10,23 +10,15 @@ import androidx.work.WorkerParameters;
 import com.example.a75dayshardchallenge.RoomDatabase.AppDatabase;
 import com.example.a75dayshardchallenge.RoomDatabase.DayDao;
 import com.example.a75dayshardchallenge.RoomDatabase.day;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.ParseException;
+
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
 
 public class CreateDocumentWorker extends Worker {
     AppDatabase appDatabase;
@@ -74,18 +66,27 @@ public class CreateDocumentWorker extends Worker {
                 if (!previousDay.isField1()|| !previousDay.isField2() || !previousDay.isField3() ||
                         !previousDay.isField4() || !previousDay.isField5() || !previousDay.isField6()) {
                     // Delete all data in the table
-                    dayDao.deleteDay();
+                   // dayDao.deleteDay();
+                    day existingDay = dayDao.getDayById(currentDate);
+                    if(existingDay==null) {
 
-                    day newDay = new day();
-                    newDay.setId(currentDate);
-                    newDay.setField1(false);
-                    newDay.setField2(false);
-                    newDay.setField3(false);
-                    newDay.setField4(false);
-                    newDay.setField5(false);
-                    newDay.setField6(false);
-                    newDay.setDaycount(1); // Increment daycount
-                    dayDao.insertDay(newDay);
+                        day newDay = new day();
+                        newDay.setId(currentDate);
+                        newDay.setField1(false);
+                        newDay.setField2(false);
+                        newDay.setField3(false);
+                        newDay.setField4(false);
+                        newDay.setField5(false);
+                        newDay.setField6(false);
+                        if(previousDay==null)
+                        {
+                            newDay.setPoinCount(0);
+                        }else {
+                            newDay.setPoinCount(previousDay.getPoinCount());
+                        }
+                        newDay.setDaycount(1); // Increment daycount
+                        dayDao.insertDay(newDay);
+                    }
 
 
 
@@ -101,6 +102,7 @@ public class CreateDocumentWorker extends Worker {
                     initialEntry.setField4(false);
                     initialEntry.setField5(false);
                     initialEntry.setField6(false);
+                    initialEntry.setPoinCount(previousDay.getPoinCount());
                     initialEntry.setDaycount(previousDay.getDaycount()+1);
 
                     appDatabase.days75Dao().insertDay(initialEntry);
